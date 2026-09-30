@@ -106,11 +106,11 @@ export const AdminDashboard: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <div className="bg-white/10 backdrop-blur-xs px-4 py-2.5 rounded-2xl border border-white/15 text-center">
-            <span className="text-[10px] uppercase font-bold text-white/60 tracking-wider">Active Queue</span>
+            <span className="text-[10px] font-bold text-white/60 tracking-wider">Active Queue</span>
             <p className="text-2xl font-mono font-bold text-[#DAE3B7]">{activeComplaintsCount}</p>
           </div>
           <div className="bg-red-500/20 backdrop-blur-xs px-4 py-2.5 rounded-2xl border border-red-500/30 text-center">
-            <span className="text-[10px] uppercase font-bold text-red-200 tracking-wider">Urgent SLA</span>
+            <span className="text-[10px] font-bold text-red-200 tracking-wider">Urgent SLA</span>
             <p className="text-2xl font-mono font-bold text-red-300">{urgentTickets.length}</p>
           </div>
         </div>

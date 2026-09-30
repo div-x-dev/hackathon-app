@@ -13,7 +13,6 @@ import {
   Leaf,
   Users,
   ChevronDown,
-  RotateCcw,
   Sun,
   Moon,
   Globe,
@@ -85,66 +84,6 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 glass-nav transition-colors">
-      {/* Demo helper quick bar */}
-      <div className="bg-white/40 dark:bg-[#182214]/50 backdrop-blur-md px-4 py-1.5 border-b border-white/40 dark:border-white/10 text-xs text-[#14200C]/85 dark:text-[#F2F6ED]/85">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap">
-            <span className="font-bold text-[#4A5F29] dark:text-[#DAE3B7]">Demo Scenario:</span>
-            <span>Current Role:</span>
-            <span className="font-extrabold text-[#14200C] dark:text-[#F2F6ED] uppercase tracking-wide">
-              {role === 'citizen' ? `Citizen (${currentUser.name})` : role === 'admin' ? 'Municipal Admin' : 'Worker'}
-            </span>
-            <span className="text-[#969691] dark:text-[#8E9B82]">·</span>
-            <span className="text-[#969691] dark:text-[#8E9B82] hidden sm:inline">Active Aarav Complaints: {citizenActiveComplaintsCount}</span>
-          </div>
-
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Quick role toggles for presentation convenience */}
-            <div className="flex items-center bg-white/60 dark:bg-[#182214]/70 backdrop-blur-md rounded-lg border border-white/50 dark:border-white/10 p-0.5 shadow-2xs">
-              <button
-                onClick={() => setRole('citizen')}
-                className={`px-2 py-0.5 text-[11px] font-semibold rounded-md transition-colors ${
-                  role === 'citizen'
-                    ? 'bg-[#4A5F29] text-white shadow-2xs'
-                    : 'text-[#14200C]/75 dark:text-[#F2F6ED]/75 hover:text-[#14200C]'
-                }`}
-              >
-                Citizen
-              </button>
-              <button
-                onClick={() => setRole('admin')}
-                className={`px-2 py-0.5 text-[11px] font-semibold rounded-md transition-colors ${
-                  role === 'admin'
-                    ? 'bg-[#4A5F29] text-white shadow-2xs'
-                    : 'text-[#14200C]/75 dark:text-[#F2F6ED]/75 hover:text-[#14200C]'
-                }`}
-              >
-                Admin
-              </button>
-              <button
-                onClick={() => setRole('worker')}
-                className={`px-2 py-0.5 text-[11px] font-semibold rounded-md transition-colors ${
-                  role === 'worker'
-                    ? 'bg-[#4A5F29] text-white shadow-2xs'
-                    : 'text-[#14200C]/75 dark:text-[#F2F6ED]/75 hover:text-[#14200C]'
-                }`}
-              >
-                Worker
-              </button>
-            </div>
-
-            <button
-              onClick={resetToDefaultDemoData}
-              title="Reset state to initial demo data"
-              className="flex items-center gap-1 text-[11px] font-medium text-[#14200C]/65 dark:text-[#F2F6ED]/65 hover:text-[#9A4A3A] transition-colors"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span className="hidden md:inline">Reset Demo</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Main Nav */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Zone 1: Brand Wordmark */}
@@ -325,7 +264,33 @@ export const Navbar: React.FC = () => {
 
       {/* Hamburger Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="glass-nav border-b border-white/50 dark:border-white/15 px-4 py-4 space-y-5 animate-in slide-in-from-top-2 shadow-2xl max-h-[85vh] overflow-y-auto">
+        <div className="glass-nav border-b border-white/50 dark:border-white/15 px-4 py-4 space-y-4 animate-in slide-in-from-top-2 shadow-2xl max-h-[85vh] overflow-y-auto">
+          {/* Eco Awareness Shortcut (Shifted from bottom of prototype) */}
+          <div className="pb-1">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('awareness');
+                setMobileMenuOpen(false);
+              }}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl border text-xs font-bold transition-smooth ${
+                activeTab === 'awareness'
+                  ? 'bg-[#4A5F29] text-white border-[#4A5F29] shadow-xs'
+                  : 'bg-white/70 dark:bg-[#202D1A] hover:bg-[#EEF0E4] dark:hover:bg-[#283921] border-[#14200C]/10 dark:border-[#DAE3B7]/20 text-[#14200C] dark:text-[#F2F6ED] shadow-2xs'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-6 h-6 rounded-lg bg-[#4A5F29]/15 dark:bg-[#DAE3B7]/20 text-[#4A5F29] dark:text-[#DAE3B7] flex items-center justify-center">
+                  <Leaf className="w-3.5 h-3.5" />
+                </div>
+                <span className="text-xs font-bold">Eco Awareness</span>
+              </div>
+              <span className="text-[11px] font-semibold text-[#4A5F29] dark:text-[#DAE3B7]">
+                Civic Guide →
+              </span>
+            </button>
+          </div>
+
           {/* Navigation Links for Mobile */}
           <div className="lg:hidden space-y-1">
             <p className="text-[11px] font-bold uppercase tracking-wider text-[#969691] px-1 pb-1">

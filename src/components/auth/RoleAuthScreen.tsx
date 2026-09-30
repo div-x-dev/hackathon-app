@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserRole } from '../../types';
 import { Logo } from '../brand/Logo';
@@ -10,6 +10,7 @@ import {
   HardHat,
   Shield,
   ArrowRight,
+  ArrowLeft,
   Phone,
   Lock,
   Mail,
@@ -24,7 +25,15 @@ import {
   ChevronDown,
 } from 'lucide-react';
 
-export const RoleAuthScreen: React.FC = () => {
+interface RoleAuthScreenProps {
+  initialRole?: UserRole;
+  onBackToIntro?: () => void;
+}
+
+export const RoleAuthScreen: React.FC<RoleAuthScreenProps> = ({
+  initialRole = 'citizen',
+  onBackToIntro,
+}) => {
   const {
     login,
     theme,
@@ -34,7 +43,13 @@ export const RoleAuthScreen: React.FC = () => {
     t,
   } = useApp();
 
-  const [selectedRole, setSelectedRole] = useState<UserRole>('citizen');
+  const [selectedRole, setSelectedRole] = useState<UserRole>(initialRole);
+
+  useEffect(() => {
+    if (initialRole) {
+      setSelectedRole(initialRole);
+    }
+  }, [initialRole]);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
@@ -43,6 +58,8 @@ export const RoleAuthScreen: React.FC = () => {
   const [citizenMode, setCitizenMode] = useState<'signin' | 'register'>('signin');
   const [citizenPhone, setCitizenPhone] = useState('+91 98765 43210');
   const [citizenOtp, setCitizenOtp] = useState('4829');
+  const [idProofType, setIdProofType] = useState<'AADHAAR CARD' | 'PAN CARD' | 'VOTER ID'>('AADHAAR CARD');
+  const [idProofNumber, setIdProofNumber] = useState('');
   const [citizenName, setCitizenName] = useState('Aarav Sharma');
   const [citizenWard, setCitizenWard] = useState('College Road');
   const [citizenAddress, setCitizenAddress] = useState('Flat 402, Green Meadows');
@@ -91,6 +108,8 @@ export const RoleAuthScreen: React.FC = () => {
         id: citizenMode === 'signin' ? 'u-aarav' : `u-${Date.now()}`,
         name: citizenMode === 'signin' ? 'Aarav Sharma' : citizenName,
         phone: citizenPhone,
+        idProofType,
+        idProofNumber: idProofNumber || '5489 2147 9823',
         address: citizenMode === 'signin' ? 'Flat 402, Green Meadows, College Road' : `${citizenAddress}, ${citizenWard}`,
         area: citizenMode === 'signin' ? 'College Road' : citizenWard,
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
@@ -152,6 +171,8 @@ export const RoleAuthScreen: React.FC = () => {
   const handleQuickDemoCitizen = () => {
     setCitizenMode('signin');
     setCitizenPhone('+91 98765 43210');
+    setIdProofType('AADHAAR CARD');
+    setIdProofNumber('5489 2147 9823');
     setCitizenOtp('4829');
     handleCitizenSubmit();
   };
@@ -173,6 +194,18 @@ export const RoleAuthScreen: React.FC = () => {
       {/* Top Utility Bar */}
       <header className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
+          {onBackToIntro && (
+            <button
+              type="button"
+              onClick={onBackToIntro}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#182214] border border-[#14200C]/15 dark:border-[#DAE3B7]/20 text-[#14200C] dark:text-[#F2F6ED] hover:border-[#4A5F29] hover:text-[#4A5F29] dark:hover:text-[#DAE3B7] transition-all shadow-xs mr-1"
+              title="Return to Role Selection"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+          )}
+          <Logo size="sm" />
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-[#EEF0E4] dark:bg-[#202D1A] border border-[#14200C]/10 dark:border-[#DAE3B7]/15 text-[#4A5F29] dark:text-[#DAE3B7]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#4A5F29] dark:bg-[#DAE3B7] animate-pulse" />
             Civic Municipal Portal
@@ -238,82 +271,7 @@ export const RoleAuthScreen: React.FC = () => {
         <div className="w-full max-w-lg mx-auto flex flex-col items-center">
           
           {/* ================================================== */}
-          {/* 1. LOGO & BRANDING (Exact uploaded BinSync logo) */}
-          {/* ================================================== */}
-          <div className="flex flex-col items-center text-center mb-8">
-            <div className="transition-transform duration-300 hover:scale-105">
-              <Logo size="hero" showText={false} className="drop-shadow-sm" />
-            </div>
-
-            <h1 className="mt-4 text-3xl sm:text-4xl font-extrabold tracking-tight text-[#14200C] dark:text-[#F2F6ED]">
-              BINSYNC
-            </h1>
-
-            <p className="mt-1.5 text-sm sm:text-base text-[#14200C]/75 dark:text-[#DAE3B7]/80 max-w-xs sm:max-w-sm">
-              Smarter waste management. Cleaner communities.
-            </p>
-          </div>
-
-          {/* ================================================== */}
-          {/* 2. THREE PILL-SHAPED ROLE BUTTONS */}
-          {/* ================================================== */}
-          <div className="w-full max-w-md bg-[#EEF0E4]/90 dark:bg-[#202D1A] p-1.5 rounded-full border border-[#14200C]/15 dark:border-[#DAE3B7]/20 shadow-xs mb-8">
-            <div className="grid grid-cols-3 gap-1.5">
-              {/* Citizen Pill */}
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedRole('citizen');
-                  setCitizenError(null);
-                }}
-                className={`py-2.5 px-3 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase transition-all duration-200 flex items-center justify-center gap-1.5 select-none active:scale-[0.98] ${
-                  selectedRole === 'citizen'
-                    ? 'bg-[#4A5F29] text-white shadow-md shadow-[#4A5F29]/25 scale-[1.01]'
-                    : 'text-[#14200C] dark:text-[#F2F6ED]/85 hover:text-[#14200C] dark:hover:text-white hover:-translate-y-0.5 hover:bg-white/60 dark:hover:bg-white/5'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>CITIZEN</span>
-              </button>
-
-              {/* Worker Pill */}
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedRole('worker');
-                  setWorkerError(null);
-                }}
-                className={`py-2.5 px-3 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase transition-all duration-200 flex items-center justify-center gap-1.5 select-none active:scale-[0.98] ${
-                  selectedRole === 'worker'
-                    ? 'bg-[#4A5F29] text-white shadow-md shadow-[#4A5F29]/25 scale-[1.01]'
-                    : 'text-[#14200C] dark:text-[#F2F6ED]/85 hover:text-[#14200C] dark:hover:text-white hover:-translate-y-0.5 hover:bg-white/60 dark:hover:bg-white/5'
-                }`}
-              >
-                <HardHat className="w-3.5 h-3.5" />
-                <span>WORKER</span>
-              </button>
-
-              {/* Admin Pill */}
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedRole('admin');
-                  setAdminError(null);
-                }}
-                className={`py-2.5 px-3 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase transition-all duration-200 flex items-center justify-center gap-1.5 select-none active:scale-[0.98] ${
-                  selectedRole === 'admin'
-                    ? 'bg-[#4A5F29] text-white shadow-md shadow-[#4A5F29]/25 scale-[1.01]'
-                    : 'text-[#14200C] dark:text-[#F2F6ED]/85 hover:text-[#14200C] dark:hover:text-white hover:-translate-y-0.5 hover:bg-white/60 dark:hover:bg-white/5'
-                }`}
-              >
-                <Shield className="w-3.5 h-3.5" />
-                <span>ADMIN</span>
-              </button>
-            </div>
-          </div>
-
-          {/* ================================================== */}
-          {/* 3. SMOOTH ROLE-SPECIFIC FORM CONTAINER */}
+          {/* SMOOTH ROLE-SPECIFIC FORM CONTAINER */}
           {/* ================================================== */}
           <div className="w-full bg-white dark:bg-[#182214] rounded-3xl border border-[#14200C]/12 dark:border-[#DAE3B7]/15 p-6 sm:p-8 shadow-lg shadow-[#14200C]/05 transition-all duration-300">
             
@@ -403,6 +361,42 @@ export const RoleAuthScreen: React.FC = () => {
                             </div>
                           </div>
 
+                          {/* Dropdown list ID PROOF */}
+                          <div>
+                            <label className="block text-xs font-bold text-[#14200C] dark:text-[#F2F6ED] mb-1.5 uppercase tracking-wide">
+                              ID PROOF
+                            </label>
+                            <select
+                              value={idProofType}
+                              onChange={(e) => setIdProofType(e.target.value as any)}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#14200C]/15 dark:border-[#DAE3B7]/20 bg-[#F7F7F1]/60 dark:bg-[#202D1A] text-sm font-semibold text-[#14200C] dark:text-[#F2F6ED] focus:outline-none focus:border-[#4A5F29] focus:ring-1 focus:ring-[#4A5F29] cursor-pointer"
+                            >
+                              <option value="AADHAAR CARD">AADHAAR CARD</option>
+                              <option value="PAN CARD">PAN CARD</option>
+                              <option value="VOTER ID">VOTER ID</option>
+                            </select>
+                          </div>
+
+                          {/* Dialogue box for entrying the ID Proof Number */}
+                          <div>
+                            <label className="block text-xs font-bold text-[#14200C] dark:text-[#F2F6ED] mb-1.5 uppercase tracking-wide">
+                              ID Proof Number
+                            </label>
+                            <input
+                              type="text"
+                              value={idProofNumber}
+                              onChange={(e) => setIdProofNumber(e.target.value)}
+                              placeholder={
+                                idProofType === 'AADHAAR CARD'
+                                  ? 'Enter 12-digit Aadhaar Number (e.g. 5489 2147 9823)'
+                                  : idProofType === 'PAN CARD'
+                                  ? 'Enter 10-character PAN (e.g. ABCDE1234F)'
+                                  : 'Enter Voter ID Number (e.g. WBD1234567)'
+                              }
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#14200C]/15 dark:border-[#DAE3B7]/20 bg-[#F7F7F1]/60 dark:bg-[#202D1A] text-sm font-medium text-[#14200C] dark:text-[#F2F6ED] focus:outline-none focus:border-[#4A5F29] focus:ring-1 focus:ring-[#4A5F29]"
+                            />
+                          </div>
+
                           <div>
                             <div className="flex items-center justify-between mb-1.5">
                               <label className="text-xs font-bold text-[#14200C] dark:text-[#F2F6ED] uppercase tracking-wide">
@@ -450,6 +444,42 @@ export const RoleAuthScreen: React.FC = () => {
                               onChange={(e) => setCitizenPhone(e.target.value)}
                               placeholder="+91 98765 43210"
                               className="w-full px-3.5 py-2.5 rounded-xl border border-[#14200C]/15 dark:border-[#DAE3B7]/20 bg-[#F7F7F1]/60 dark:bg-[#202D1A] text-sm font-medium focus:outline-none focus:border-[#4A5F29]"
+                            />
+                          </div>
+
+                          {/* Dropdown list ID PROOF */}
+                          <div>
+                            <label className="block text-xs font-bold text-[#14200C] dark:text-[#F2F6ED] mb-1.5 uppercase tracking-wide">
+                              ID PROOF
+                            </label>
+                            <select
+                              value={idProofType}
+                              onChange={(e) => setIdProofType(e.target.value as any)}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#14200C]/15 dark:border-[#DAE3B7]/20 bg-[#F7F7F1]/60 dark:bg-[#202D1A] text-sm font-semibold text-[#14200C] dark:text-[#F2F6ED] focus:outline-none focus:border-[#4A5F29] focus:ring-1 focus:ring-[#4A5F29] cursor-pointer"
+                            >
+                              <option value="AADHAAR CARD">AADHAAR CARD</option>
+                              <option value="PAN CARD">PAN CARD</option>
+                              <option value="VOTER ID">VOTER ID</option>
+                            </select>
+                          </div>
+
+                          {/* Dialogue box for entrying the ID Proof Number */}
+                          <div>
+                            <label className="block text-xs font-bold text-[#14200C] dark:text-[#F2F6ED] mb-1.5 uppercase tracking-wide">
+                              ID Proof Number
+                            </label>
+                            <input
+                              type="text"
+                              value={idProofNumber}
+                              onChange={(e) => setIdProofNumber(e.target.value)}
+                              placeholder={
+                                idProofType === 'AADHAAR CARD'
+                                  ? 'Enter 12-digit Aadhaar Number (e.g. 5489 2147 9823)'
+                                  : idProofType === 'PAN CARD'
+                                  ? 'Enter 10-character PAN (e.g. ABCDE1234F)'
+                                  : 'Enter Voter ID Number (e.g. WBD1234567)'
+                              }
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#14200C]/15 dark:border-[#DAE3B7]/20 bg-[#F7F7F1]/60 dark:bg-[#202D1A] text-sm font-medium text-[#14200C] dark:text-[#F2F6ED] focus:outline-none focus:border-[#4A5F29] focus:ring-1 focus:ring-[#4A5F29]"
                             />
                           </div>
 

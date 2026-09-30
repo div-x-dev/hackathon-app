@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/layout/Navbar';
 import { CitizenDashboard } from './components/citizen/CitizenDashboard';
@@ -13,10 +13,25 @@ import { Toast } from './components/common/Toast';
 import { Logo } from './components/brand/Logo';
 import { SproutIcon } from './components/brand/Mascots';
 import { RoleAuthScreen } from './components/auth/RoleAuthScreen';
+import { OrbitalEcosystemScreen } from './components/intro/OrbitalEcosystemScreen';
 import { DashboardEcoBackground } from './components/common/DashboardEcoBackground';
+import { UserRole } from './types';
 
 const MainContent: React.FC = () => {
-  const { role, activeTab, setActiveTab } = useApp();
+  const { role, activeTab, setActiveTab, setRole } = useApp();
+
+  if (activeTab === 'ecosystem') {
+    return (
+      <div className="-mt-6 -mx-4 sm:-mx-6">
+        <OrbitalEcosystemScreen
+          onSelectRole={(targetRole) => {
+            setRole(targetRole);
+            setActiveTab(targetRole === 'admin' ? 'priority-queue' : targetRole === 'worker' ? 'my-tasks' : 'dashboard');
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
@@ -41,8 +56,6 @@ const MainContent: React.FC = () => {
 };
 
 const Footer: React.FC = () => {
-  const { setRole, setActiveTab } = useApp();
-
   return (
     <footer className="mt-20 border-t border-white/50 dark:border-white/10 bg-white/60 dark:bg-[#182214]/65 backdrop-blur-xl py-12 text-[#14200C]/75 dark:text-[#F2F6ED]/75 text-xs shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -52,48 +65,6 @@ const Footer: React.FC = () => {
           <p className="text-[#969691] dark:text-[#8E9B82]">
             Civic-Tech Municipal Waste Dispatch & Audited Tracking Platform · Ward 24
           </p>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-center gap-6 font-semibold">
-          <button
-            onClick={() => setActiveTab('landing')}
-            className="hover:text-[#4A5F29] dark:hover:text-[#DAE3B7] transition-colors"
-          >
-            Landing Overview
-          </button>
-          <button
-            onClick={() => {
-              setRole('citizen');
-              setActiveTab('dashboard');
-            }}
-            className="hover:text-[#4A5F29] dark:hover:text-[#DAE3B7] transition-colors"
-          >
-            Citizen Portal
-          </button>
-          <button
-            onClick={() => {
-              setRole('admin');
-              setActiveTab('priority-queue');
-            }}
-            className="hover:text-[#4A5F29] dark:hover:text-[#DAE3B7] transition-colors"
-          >
-            Municipal Admin
-          </button>
-          <button
-            onClick={() => {
-              setRole('worker');
-              setActiveTab('my-tasks');
-            }}
-            className="hover:text-[#4A5F29] dark:hover:text-[#DAE3B7] transition-colors"
-          >
-            Worker Portal
-          </button>
-          <button
-            onClick={() => setActiveTab('awareness')}
-            className="hover:text-[#4A5F29] dark:hover:text-[#DAE3B7] transition-colors"
-          >
-            Eco Awareness
-          </button>
         </div>
 
         <div className="text-[#969691] dark:text-[#8E9B82] text-center sm:text-right font-tabular">
@@ -106,11 +77,30 @@ const Footer: React.FC = () => {
 
 const AppContent: React.FC = () => {
   const { isAuthenticated } = useApp();
+  const [selectedRoleForAuth, setSelectedRoleForAuth] = useState<UserRole | null>(null);
 
   if (!isAuthenticated) {
+    // FIRST PAGE — ONLY ROLE SELECTION (No login forms, email, password, or phone fields)
+    if (!selectedRoleForAuth) {
+      return (
+        <>
+          <OrbitalEcosystemScreen
+            onSelectRole={(role) => {
+              setSelectedRoleForAuth(role);
+            }}
+          />
+          <Toast />
+        </>
+      );
+    }
+
+    // AUTHENTICATION SCREEN — Only shown AFTER the user has chosen a role
     return (
       <>
-        <RoleAuthScreen />
+        <RoleAuthScreen
+          initialRole={selectedRoleForAuth}
+          onBackToIntro={() => setSelectedRoleForAuth(null)}
+        />
         <Toast />
       </>
     );
